@@ -1,0 +1,8 @@
+ipykernel
+pandas
+numpy
+matplotlib
+plotly
+seaborn
+pyspark
+fastapi
