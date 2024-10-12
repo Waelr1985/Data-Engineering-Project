@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_db:/var/lib/postgresql/data  # Persist Postgres data
+
+  airflow-init:
+    image: apache/airflow:2.7.0
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    entrypoint: ["/bin/bash", "-c", "airflow db init"]
+
+  webserver:
+    image: apache/airflow:2.7.0
+    depends_on:
+      - postgres
+      - airflow-init
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    ports:
+      - "8080:8080"
+    command: webserver
+    volumes:
+      - ./dags:/opt/airflow/dags  # Mount your local dags folder
+      - ./logs:/opt/airflow/logs  # Mount your local logs folder
+      - ./plugins:/opt/airflow/plugins  # Mount your local plugins folder
+
+  scheduler:
+    image: apache/airflow:2.7.0
+    depends_on:
+      - postgres
+      - airflow-init
+    command: scheduler
+    volumes:
+      - ./dags:/opt/airflow/dags  # Ensure dags are shared with the scheduler
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+
+volumes:
+  postgres_db:
