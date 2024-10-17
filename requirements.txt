@@ -6,3 +6,6 @@ plotly
 seaborn
 pyspark
 fastapi
+uvicorn==0.32.0
+google-cloud-storage
+-e .
