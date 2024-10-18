@@ -26,7 +26,7 @@ class DataIngestion:
             logging.info("Exited the get_data_from_gcp method of data ingestion class")
 
         except Exception as e:
-            raise NerException(e, sys) from e
+            raise PowerException(e, sys) from e
 
 
     def extract_data(self, input_file_path: str, output_file_path: str) -> None:
@@ -41,7 +41,7 @@ class DataIngestion:
             logging.info("Exited the extract_data method of Data ingestion class")
 
         except Exception as e:
-            raise NerException(e, sys) from e
+            raise PowerException(e, sys) from e
 
 
     def initiate_data_ingestion(self) -> DataIngestionArtifacts:
@@ -82,4 +82,4 @@ class DataIngestion:
             return data_ingestion_artifact
 
         except Exception as e:
-            raise NerException(e, sys) from e
+            raise PowerException(e, sys) from e
